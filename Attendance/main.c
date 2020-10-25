@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <time.h>
 
-// Testar att ändra för att se om github lirar
+// github fest
 //  main.c
 //  Attendance
 //
