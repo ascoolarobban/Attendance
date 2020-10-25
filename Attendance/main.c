@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <time.h>
 
-// github fest
+// 
 //  main.c
 //  Attendance
 //
