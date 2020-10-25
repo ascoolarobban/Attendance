@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <time.h>
 
-// 
+// Innehåller f.open!
 //  main.c
 //  Attendance
 //
