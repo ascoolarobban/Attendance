@@ -42,7 +42,7 @@ typedef struct
 {
     int number;
     bool access;
-    const char* time;
+    time_t time;
 }CARD;
 
 typedef struct
@@ -52,16 +52,13 @@ typedef struct
     
 }CARDLIST;
 
-char *timeStamp()
+char *timestamp(time_t tiktok)
 {
-    char *timestamp = (char *)malloc(sizeof(char) * 16);
-    time_t now = time(0);
+    char *timeString = (char *)malloc(sizeof(char) * 30);
     struct tm *tm;
-    tm=localtime(&now);
-
-    sprintf(timestamp,"%04d-%02d-%02d", tm->tm_year+1900, tm->tm_mon+1,
-        tm->tm_mday);
-    return timestamp;
+    tm=localtime(&tiktok);
+    strftime(timeString,30,"%c", tm);
+    return timeString;
 }
 
 
@@ -78,7 +75,7 @@ void listOfAllCards(CARDLIST* state)
     {
         CARD c = state ->allCards[i];
         char* access = c.access == 1?"Has Access.":"Does not have access.";
-        printf("%d %s %s \n", c.number, access, c.time);
+        printf("%d %s %s \n", c.number, access, timestamp(c.time));
     }
     loading();
 }
@@ -116,14 +113,14 @@ void NewCard(CARDLIST *state)
     {
         access = false;
     }
-    CARD cardHolder = {cardNumber, access, timeStamp()};
+    CARD cardHolder = {cardNumber, access, time(0)};
     state->allCards[indexForTheNewOne].number=cardHolder.number;
     state->allCards[indexForTheNewOne].access=cardHolder.access;
     state->allCards[indexForTheNewOne].time=cardHolder.time;
-    FILE *f = fopen("rfidcards.txt", "a+");
-    fprintf(f,"%d %d %s",cardHolder.number, cardHolder.access, cardHolder.time);
-    fclose(f);
-    printf("Card %d successfully added: %s\n", cardNumber, timeStamp());
+//    FILE *f = fopen("rfidcards.txt", "a+");
+//    fprintf(f,"%d %d %s",cardHolder.number, cardHolder.access, cardHolder.time);
+//    fclose(f);
+    printf("Card %d successfully added: %s\n", cardNumber, timestamp(time(0)));
     for(int i=0; i<6; i++)
     {
         printf(".");
@@ -238,7 +235,7 @@ void Huvudmeny(CARDLIST *state)
         case 5:
                 GetInputInt("Enter card to change access: ->\n", &choice);
                 ChangeAccess(state, choice);
-                printf("Acces has been changed for #%d %s", choice, timeStamp());
+                printf("Acces has been changed for #%d %s", choice, timestamp(time(0)));
                 
 
         }
