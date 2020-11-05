@@ -4,11 +4,10 @@
 #include "safeinput.h"
 #include <stdbool.h>
 #include <time.h>
-
-// Innehåller f.open!
+#include <string.h>
 //  main.c
 //  Attendance
-//
+//  inlupp2_RfidTag
 //  Created by Robin Ellingsen on 2020-10-21.
 //  Copyright © 2020 Robin Ellingsen. All rights reserved.
 //
@@ -23,7 +22,7 @@ void sleeper(int number_of_seconds)
 void loading()
 {
     printf("Loading");
-    for(int i=0; i<10; i++)
+    for(int i=0; i<5; i++)
     {
         printf(".");
         sleeper(1);
@@ -101,7 +100,7 @@ void NewCard(CARDLIST *state)
     }
     int cardNumber;
     char gotAccess;
-    GetInputInt("Enter Card Number:-> ", &cardNumber);
+    GetInputInt("Enter Card Number:->[****] ", &cardNumber);
     printf("Grant access? [y/n]: \n");
     scanf("%c",&gotAccess);
     bool access = false;
@@ -118,9 +117,9 @@ void NewCard(CARDLIST *state)
     state->allCards[indexForTheNewOne].access=cardHolder.access;
     state->allCards[indexForTheNewOne].time=cardHolder.time;
 //    FILE *f = fopen("rfidcards.txt", "a+");
-//    fprintf(f,"%d %d %s",cardHolder.number, cardHolder.access, cardHolder.time);
+//    fprintf(f,"%d %d %s\n",cardHolder.number, cardHolder.access, timestamp(cardHolder.time));
 //    fclose(f);
-    printf("Card %d successfully added: %s\n", cardNumber, timestamp(time(0)));
+    printf("Card #%d was successfully added:\n%s\n", cardNumber, timestamp(time(0)));
     for(int i=0; i<6; i++)
     {
         printf(".");
@@ -197,6 +196,36 @@ void remoteAccess(CARDLIST* state, int lookfor)
     
 }
 
+int arduino(CARDLIST *state)
+{
+    char allowedCard[100];
+    char buffer[10];
+    for (int i =0; i< state ->numberOfCards; i++)
+    {
+        if(state->allCards[i].access == true)
+        {
+            
+            sprintf(buffer,"%d", state->allCards[i].number);
+            strcat(allowedCard, buffer);
+            strcat(allowedCard, ",");
+        }
+    }
+    FILE *file;
+
+    file = fopen("/dev/cu.usbmodem14201","w");
+    if (!file) {
+        perror("/dev/cu.usbmodem14201");
+        return 1;
+        }
+    for (int c = 1; c <= 32767; c++){
+       for (int d = 1; d <= 32767; d++)
+       {}}
+    
+    fprintf(file,"%s", allowedCard);
+
+    return 0;
+}
+
 
 void Huvudmeny(CARDLIST *state)
 {
@@ -204,7 +233,7 @@ void Huvudmeny(CARDLIST *state)
     {
         clearConsole();
         printf("***WELCOME***\n");
-        printf("1. List all cards.\n2. Add Card.\n3. Remote Access.\n4. Open door.\n5. Change Access\n");
+        printf("1. List all cards.\n2. Add Card.\n3. Remote Access.\n4. Remote open door.\n5. Change Access\n9. Send cardlist to arduino.\n");
         int choice;
         int selection;
         int lookFor;
@@ -236,6 +265,8 @@ void Huvudmeny(CARDLIST *state)
                 GetInputInt("Enter card to change access: ->\n", &choice);
                 ChangeAccess(state, choice);
                 printf("Acces has been changed for #%d %s", choice, timestamp(time(0)));
+        case 9:
+                arduino(state);
                 
 
         }
@@ -250,5 +281,6 @@ int main()
     Huvudmeny(&state);
     return 0;
 }
+
 
 
