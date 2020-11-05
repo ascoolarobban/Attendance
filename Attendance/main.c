@@ -7,7 +7,7 @@
 #include <string.h>
 //  main.c
 //  Attendance
-//  inlupp2_RfidTag
+//  inlupp2_mayTheForceBewithMe
 //  Created by Robin Ellingsen on 2020-10-21.
 //  Copyright © 2020 Robin Ellingsen. All rights reserved.
 //
